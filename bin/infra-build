@@ -1,0 +1,13 @@
+#!/usr/bin/env bash 
+
+set -e
+
+cd `dirname $0`/../deploy/terraform
+
+terraform init
+
+terraform apply  -auto-approve
+
+terraform output instance_ip > ../instance_ip
+
+
