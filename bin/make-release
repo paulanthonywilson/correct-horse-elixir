@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -e
+
+
+SCRIPT_PATH=`dirname $0`
+BASE_PATH=`realpath "$SCRIPT_PATH/.."`
+DOCKER_PATH="$BASE_PATH/deploy/docker_build"
+APP=correcthorse_main
+
+docker build -t $APP $DOCKER_PATH
+
+# docker run -v "$BASE_PATH":/opt/build --rm -it $APP deploy/docker_build/build
+
+docker run -v "$BASE_PATH":/opt/build --rm -it $APP  /bin/bash
+
+# /opt/build/docker_build/build
+

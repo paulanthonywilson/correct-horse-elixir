@@ -24,7 +24,7 @@ defmodule CorrecthorseWeb.MixProject do
   def application do
     [
       mod: {CorrecthorseWeb.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :wx, :observer]
     ]
   end
 

@@ -134,9 +134,9 @@ resource "aws_elb" "web" {
 
   health_check {
     healthy_threshold   = 2
-    unhealthy_threshold = 2
+    unhealthy_threshold = 10
     timeout             = 3
-    target              = "HTTP:80/"
+    target              = "TCP:80"
     interval            = 5
   }
 

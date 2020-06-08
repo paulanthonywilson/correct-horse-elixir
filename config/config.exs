@@ -9,8 +9,6 @@
 # move said applications out of the umbrella.
 use Mix.Config
 
-
-
 config :correcthorse_web,
   generators: [context_app: :correcthorse]
 
