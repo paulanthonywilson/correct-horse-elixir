@@ -4,15 +4,15 @@ package_upgrade: true
 
 write_files:
 - owner: root:root
-  path: /etc/systemd/system/correcthorse.service
+  path: /etc/systemd/system/correcthorse_main.service
   content: |
     [Unit]
-    Description=Service for correcting horses
+    Description=Service mainly for correcting horses
     After=network.target
  
     [Service]
     Type=simple
-    PIDFile=/var/run/correcthorse/correcthorse.pid
+    PIDFile=/var/run/correcthorse_main/correcthorse_main.pid
     ExecStart=/home/ubuntu/app/bin/correcthorse_main start 2>&1
     TimeoutStartSec=0
     Restart=on-failure

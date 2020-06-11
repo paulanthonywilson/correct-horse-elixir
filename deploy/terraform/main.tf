@@ -29,9 +29,9 @@ resource "aws_subnet" "general" {
 }
 
 # A security group for the ELB so it is accessible via the web
-resource "aws_security_group" "elb" {
-  name        = "ELB"
-  description = "For the ELB"
+resource "aws_security_group" "load_balancer" {
+  name        = "load-balancer"
+  description = "For the load-balancer"
   vpc_id      = aws_vpc.default.id
 
   # HTTP access from anywhere
@@ -107,7 +107,7 @@ resource "aws_elb" "web" {
   name = "front-of-house"
 
   subnets         = [aws_subnet.general.id]
-  security_groups = [aws_security_group.elb.id]
+  security_groups = [aws_security_group.load_balancer.id]
   instances       = [aws_instance.web.id]
 
   listener {
