@@ -4,33 +4,46 @@ set -e
 
 . ~/.asdf/asdf.sh
 
-cd /opt/build
 
 APP_NAME=correcthorse_main
 APP_VSN=`head VERSION | tr -d "\n"`
+SECRET_KEY_BASE_FILE=/opt/src/deploy/secret_key_base
 
 echo $APP_NAME
 echo $APP_VSN
 
 
-mkdir -p /opt/build/rel/artifacts
+rm -rf /opt/build
+mkdir -p /opt/build
+mkdir -p /opt/src/rel/artifacts
+cp -r .git /opt/build
+cd /opt/build
+git checkout -f 
+
 
 # Install updated versions of hex/rebar
 mix local.rebar --force
 mix local.hex --if-missing --force
 
-export MIX_ENV=dev
-export SECRET_KEY_BASE=`mix phx.gen.secret | tr -d \'\n\' `
+
+
+## Secret key base
+
+mix deps.get
+if [ -f "$SECRET_KEY_BASE_FILE" ]; then
+    export SECRET_KEY_BASE=`head "$SECRET_KEY_BASE_FILE" | tr -d '\n'`
+else
+    export MIX_ENV=dev
+    mix compile
+    export SECRET_KEY_BASE=`mix phx.gen.secret | tr -d '\n' `
+    echo $SECRET_KEY_BASE > "$SECRET_KEY_BASE_FILE"
+fi
 
 export MIX_ENV=prod
 
-# Fetch deps and compile
 mix deps.get --only prod
-# Run an explicit clean to remove any build artifacts from the host
-mix do clean, compile --force
 
 # do the asset stuff
-rm -rf ./apps/correcthorse_web/assets/node_modules
 npm install --prefix ./apps/correcthorse_web/assets
 npm run deploy --prefix ./apps/correcthorse_web/assets
 
@@ -41,8 +54,8 @@ mix phx.digest
 mix release $APP_NAME
 
 # tar the release
-cd "_build/prod/rel/$APP_NAME/releases/$APP_VSN/"
-tar zcvf /opt/build/rel/artifacts/$APP_NAME.tar.gz  .
+cd "_build/prod/rel/$APP_NAME/"
+tar zcvf /opt/src/rel/artifacts/$APP_NAME.tar.gz  .
 
 
 

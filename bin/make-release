@@ -10,9 +10,8 @@ APP=correcthorse_main
 
 docker build -t $APP $DOCKER_PATH
 
-# docker run -v "$BASE_PATH":/opt/build --rm -it $APP deploy/docker_build/build
+docker run -v "$BASE_PATH":/opt/src --rm -it $APP /opt/src/deploy/docker_build/build
+# docker run -v "$BASE_PATH":/opt/src --rm -it $APP /bin/bash
 
-docker run -v "$BASE_PATH":/opt/build --rm -it $APP  /bin/bash
 
-# /opt/build/docker_build/build
 
