@@ -26,6 +26,14 @@ resource "aws_subnet" "general" {
   vpc_id                  = aws_vpc.default.id
   cidr_block              = "10.0.3.0/24"
   map_public_ip_on_launch = true
+  availability_zone = "eu-west-1a"
+}
+
+resource "aws_subnet" "other" {
+  vpc_id                  = aws_vpc.default.id
+  cidr_block              = "10.0.2.0/24"
+  map_public_ip_on_launch = true
+  availability_zone = "eu-west-1b"
 }
 
 # A security group for the ELB so it is accessible via the web
@@ -103,37 +111,6 @@ data "aws_acm_certificate" "mycert" {
   statuses = ["ISSUED"]
 }
 
-resource "aws_elb" "web" {
-  name = "front-of-house"
-
-  subnets         = [aws_subnet.general.id]
-  security_groups = [aws_security_group.load_balancer.id]
-  instances       = [aws_instance.web.id]
-
-  listener {
-    instance_port     = 4001
-    instance_protocol = "http"
-    lb_port           = 80
-    lb_protocol       = "http"
-  }
-
-  listener {
-    instance_port = 4001
-    instance_protocol = "http"
-    lb_port = 443
-    lb_protocol = "https"
-    ssl_certificate_id = data.aws_acm_certificate.mycert.arn
-  }
-
-  health_check {
-    healthy_threshold   = 2
-    unhealthy_threshold = 10
-    timeout             = 3
-    target              = "TCP:4001"
-    interval            = 5
-  }
-}
-
 resource "aws_key_pair" "auth" {
   key_name   = var.key_name
   public_key = file(var.public_key_path)
@@ -169,4 +146,48 @@ resource "aws_instance" "web" {
   # use this to set up nginx so we can see it working.
   # Once we have releases it is no longer needed
   user_data  =  file("cloud_config.yaml")
+}
+
+resource "aws_lb" "lb" {
+  name = "new-front-of-house"
+  internal           = false
+  load_balancer_type = "application"
+  
+  security_groups = [aws_security_group.load_balancer.id]
+  subnets         = [aws_subnet.general.id, aws_subnet.other.id] 
+}
+
+resource "aws_lb_listener" "http" {
+  load_balancer_arn = aws_lb.lb.arn
+  port = "80"
+  protocol = "HTTP"
+  default_action {
+    target_group_arn = aws_lb_target_group.instance.arn
+    type = "forward"
+  }
+}
+
+resource "aws_lb_listener" "https" {
+  load_balancer_arn = aws_lb.lb.arn
+  port = "443"
+  protocol = "HTTPS"
+  ssl_policy = "ELBSecurityPolicy-2016-08"
+  certificate_arn = data.aws_acm_certificate.mycert.arn
+  default_action {
+    target_group_arn = aws_lb_target_group.instance.arn
+    type = "forward"
+  }
+}
+
+resource "aws_lb_target_group" "instance" {
+  name = "for-instance"
+  port = 4001
+  protocol = "HTTP"
+  vpc_id = aws_vpc.default.id
+}
+
+resource "aws_lb_target_group_attachment" "instance" {
+  target_group_arn = aws_lb_target_group.instance.arn
+  target_id        = aws_instance.web.id
+  port             = 4001
 }
