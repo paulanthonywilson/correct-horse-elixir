@@ -15,7 +15,8 @@ echo $APP_VSN
 
 rm -rf /opt/build
 mkdir -p /opt/build
-mkdir -p /opt/src/rel/artifacts
+mkdir -p /opt/src/deploy/release/
+echo '*' > /opt/src/deploy/release/.gitignore
 cp -r .git /opt/build
 cd /opt/build
 git checkout -f 
@@ -55,7 +56,7 @@ mix release $APP_NAME
 
 # tar the release
 cd "_build/prod/rel/$APP_NAME/"
-tar zcvf /opt/src/rel/artifacts/$APP_NAME.tar.gz  .
+tar zcvf /opt/src/deploy/release/$APP_NAME.tar.gz  .
 
 
 

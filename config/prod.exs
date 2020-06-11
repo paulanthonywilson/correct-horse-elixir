@@ -8,7 +8,7 @@ secret_key_base =
     """
 
 config :correcthorse_web, CorrecthorseWeb.Endpoint,
-  url: [host: "beta.correcthorsebatterystaple.com", port: 443, scheme: "https"],
+  url: [host: "beta.correcthorsebatterystaple.com", scheme: "https"],
   http: [port: 4001],
   cache_static_manifest: "priv/static/cache_manifest.json",
   secret_key_base: secret_key_base,

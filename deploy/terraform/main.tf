@@ -21,15 +21,8 @@ resource "aws_route" "internet_access" {
   gateway_id             = aws_internet_gateway.default.id
 }
 
-# Create a subnet for our ELB
-resource "aws_subnet" "elb" {
-  vpc_id                  = aws_vpc.default.id
-  cidr_block              = "10.0.2.0/24"
-  map_public_ip_on_launch = true
-}
-
 # And a subnet for the instance(s)
-resource "aws_subnet" "instance" {
+resource "aws_subnet" "general" {
   vpc_id                  = aws_vpc.default.id
   cidr_block              = "10.0.3.0/24"
   map_public_ip_on_launch = true
@@ -37,8 +30,8 @@ resource "aws_subnet" "instance" {
 
 # A security group for the ELB so it is accessible via the web
 resource "aws_security_group" "elb" {
-  name        = "terraform_example_elb"
-  description = "Used in the terraform"
+  name        = "ELB"
+  description = "For the ELB"
   vpc_id      = aws_vpc.default.id
 
   # HTTP access from anywhere
@@ -58,8 +51,8 @@ resource "aws_security_group" "elb" {
 
   #specific route from the ELB to subnets within the VPC
   egress {
-    from_port = 80
-    to_port =  80
+    from_port = 4001
+    to_port =  4001
     protocol = "tcp"
     cidr_blocks = ["10.0.0.0/16"]
   }
@@ -76,8 +69,8 @@ resource "aws_security_group" "elb" {
 # Our default security group to access
 # the instances over SSH and HTTP
 resource "aws_security_group" "default" {
-  name        = "terraform_example"
-  description = "Used in the terraform"
+  name        = "Instance"
+  description = "Security group for the instance"
   vpc_id      = aws_vpc.default.id
 
   # SSH access from anywhere
@@ -90,8 +83,8 @@ resource "aws_security_group" "default" {
 
   # HTTP access from the VPC
   ingress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 4001
+    to_port     = 4001
     protocol    = "tcp"
     cidr_blocks = ["10.0.0.0/16"]
   }
@@ -111,21 +104,21 @@ data "aws_acm_certificate" "mycert" {
 }
 
 resource "aws_elb" "web" {
-  name = "terraform-example-elb"
+  name = "front-of-house"
 
-  subnets         = [aws_subnet.elb.id]
+  subnets         = [aws_subnet.general.id]
   security_groups = [aws_security_group.elb.id]
   instances       = [aws_instance.web.id]
 
   listener {
-    instance_port     = 80
+    instance_port     = 4001
     instance_protocol = "http"
     lb_port           = 80
     lb_protocol       = "http"
   }
 
   listener {
-    instance_port = 80
+    instance_port = 4001
     instance_protocol = "http"
     lb_port = 443
     lb_protocol = "https"
@@ -136,10 +129,9 @@ resource "aws_elb" "web" {
     healthy_threshold   = 2
     unhealthy_threshold = 10
     timeout             = 3
-    target              = "TCP:80"
+    target              = "TCP:4001"
     interval            = 5
   }
-
 }
 
 resource "aws_key_pair" "auth" {
@@ -172,7 +164,7 @@ resource "aws_instance" "web" {
   # We're going to launch into the same subnet as our ELB. In a production
   # environment it's more common to have a separate private subnet for
   # backend instances.
-  subnet_id = aws_subnet.instance.id
+  subnet_id = aws_subnet.general.id
 
   # use this to set up nginx so we can see it working.
   # Once we have releases it is no longer needed

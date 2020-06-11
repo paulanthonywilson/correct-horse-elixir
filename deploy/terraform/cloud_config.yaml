@@ -2,8 +2,22 @@
 package_update: true
 package_upgrade: true
 
-packages:
-    - nginx
-
-runcmd:
-    - service nginx start
+write_files:
+- owner: root:root
+  path: /etc/systemd/system/correcthorse.service
+  content: |
+    [Unit]
+    Description=Service for correcting horses
+    After=network.target
+ 
+    [Service]
+    Type=simple
+    PIDFile=/var/run/correcthorse/correcthorse.pid
+    ExecStart=/home/ubuntu/app/bin/correcthorse_main start 2>&1
+    TimeoutStartSec=0
+    Restart=on-failure
+    User=ubuntu
+ 
+    [Install]
+    WantedBy=default.target
+  permissions: '0777'
