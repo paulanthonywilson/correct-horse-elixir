@@ -13,7 +13,9 @@ defmodule Correcthorse.Umbrella.MixProject do
   end
 
   defp deps do
-    []
+    [
+      {:credo, "~> 1.4", only: [:dev, :test]}
+    ]
   end
 
   defp aliases do
