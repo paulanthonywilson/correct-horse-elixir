@@ -36,7 +36,7 @@ resource "aws_subnet" "other" {
   availability_zone = "eu-west-1b"
 }
 
-# A security group for the ELB so it is accessible via the web
+# A security group for the LB so it is accessible via the web
 resource "aws_security_group" "load_balancer" {
   name        = "load-balancer"
   description = "For the load-balancer"

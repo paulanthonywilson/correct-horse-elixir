@@ -2,6 +2,8 @@
 
 set -e
 
+cd `dirname $0`/..
+
 APP_NAME=correcthorse_main
 
 instance_ip=`cat deploy/instance_ip | tr -d '\n'`
