@@ -1,7 +1,6 @@
-defmodule Correcthorse.WordsTest do
+defmodule Correcthorse.WordsImplTest do
   use ExUnit.Case
-  alias Correcthorse.Words
-  alias Correcthorse.Words.WordList
+  alias Correcthorse.Words.{WordList, WordsImpl}
 
   test "common words loaded" do
     assert WordList.size(:common_words) == 4981
@@ -9,7 +8,7 @@ defmodule Correcthorse.WordsTest do
 
   test "random word" do
     Enum.each((1..1_000), fn _ ->
-      assert Words.random_word() =~ ~r/^[a-z]+$/
+      assert WordsImpl.random_word() =~ ~r/^[a-z]+$/
     end)
   end
 end
