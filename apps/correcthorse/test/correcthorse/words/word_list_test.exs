@@ -4,7 +4,7 @@ defmodule Correcthorse.Words.WordListText do
   alias Correcthorse.Words.WordList
 
   setup do
-    {:ok, pid} = WordList.start_link({reference(), ["hello", "matey", "boy"]})
+    {:ok, pid} = WordList.start_link({reference(), ["hello\n", "matey", "boy"]})
 
     # make sure handle_continue is called
     :sys.get_status(pid)

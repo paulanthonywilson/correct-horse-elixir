@@ -42,6 +42,7 @@ defmodule Correcthorse.Words.WordList do
 
   def handle_continue(:add_words, {table, words}) do
     words
+    |> Stream.map(fn w -> String.trim(w) end)
     |> Stream.with_index()
     |> Enum.each(fn {w, i} -> :ets.insert(table, {i, w}) end)
 
