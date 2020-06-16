@@ -1,4 +1,20 @@
 input.generated-password {
-    font-size: 30px;
+    font-size: 18px;
     height: 4.5rem;
+    width: 90%;
+    float: left;
+}
+
+.copy-generated-password {
+    height: 4.5rem;
+    width: 10%;
+    display: block;
+    float: left;
+    img {
+        height: 100%;
+    }
+}
+
+.hidden {
+    display: none;
 }
