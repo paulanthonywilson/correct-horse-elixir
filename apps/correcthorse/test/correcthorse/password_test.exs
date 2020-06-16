@@ -5,8 +5,7 @@ defmodule Correcthorse.PasswordTest do
 
 
   setup do
-    Agent.start_link(fn -> [] end, name: StubWords.agent_name())
-    StubWords.set_wordlist(["oh", "me", "extra"])
+    StubWords.start(["oh", "me", "extra"])
     :ok
   end
 

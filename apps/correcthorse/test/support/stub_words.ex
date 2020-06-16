@@ -9,6 +9,11 @@ defmodule StubWords do
 
   def agent_name, do: @agent_name
 
+  def start(wordlist \\ []) do
+    Agent.start_link(fn -> [] end, name: StubWords.agent_name())
+    StubWords.set_wordlist(wordlist)
+  end
+
   def random_word do
     Agent.get_and_update(agent_name(), fn [h | t] -> {h, t} end)
   end

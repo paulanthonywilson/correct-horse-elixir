@@ -17,7 +17,8 @@ defmodule CorrecthorseWeb.Router do
   scope "/", CorrecthorseWeb do
     pipe_through :browser
 
-    live "/", ReverseLive
+    live "/reverse", ReverseLive
+    live "/", PasswordLive
   end
 
   # Other scopes may use custom stacks.
