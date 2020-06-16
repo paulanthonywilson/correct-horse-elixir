@@ -4,7 +4,8 @@ defmodule CorrecthorseWeb.PasswordLiveTest do
   import Phoenix.LiveViewTest
 
   setup do
-    StubWords.start(["danny", "sunshine", "little", "matey", "hello"])
+    wordlist = ["danny", "sunshine", "little", "matey", "hello"]
+    StubWords.start(wordlist ++ wordlist)
     :ok
   end
 
