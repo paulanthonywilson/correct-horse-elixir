@@ -18,9 +18,7 @@ defmodule Correcthorse.Password do
     do_words(new_wordlist, new_size, constraints)
   end
 
-  defp calculate_size(0, [new_word | []]), do: String.length(new_word)
-
   defp calculate_size(previous_size, [new_word | _]) do
-    previous_size + String.length(new_word) + 1
+    previous_size + String.length(new_word)
   end
 end
