@@ -1,4 +1,9 @@
 defmodule Correcthorse.Password do
+  @moduledoc """
+  Generates lists of random words to create a passphrase from.
+  """
+
+
   @words (case Mix.env() do
             :test -> StubWords
             _ -> Correcthorse.Words.WordsImpl

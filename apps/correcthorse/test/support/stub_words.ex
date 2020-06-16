@@ -1,4 +1,9 @@
 defmodule StubWords do
+  @moduledoc """
+  Stubs out `Correcthorse.Words` for testing. Sets a list of words that will be returned,
+  in order.
+  """
+
   @behaviour Correcthorse.Words
   @agent_name __MODULE__
 
