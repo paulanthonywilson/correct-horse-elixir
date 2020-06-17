@@ -15,6 +15,31 @@ input.generated-password {
     }
 }
 
+
+div.password {
+    min-height: 5em;
+}
+
+input.password-range {
+    width: 90%;
+}
+
+h1 {
+    font-size: 4rem;
+}
+
 .hidden {
     display: none;
+}
+
+.decoration-details {
+    input, label {
+        float: left;
+        height: 2em;
+    }
+
+    label {
+        padding-right: 2rem;
+        padding-left: 0.5rem;
+    }
 }

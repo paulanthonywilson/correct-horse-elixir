@@ -11,6 +11,6 @@ defmodule CorrecthorseWeb.PasswordLiveTest do
 
   test "passwords", %{conn: conn} do
     {:ok, view, _html} = live(conn, "/")
-    assert render_click(view, "generate-password", %{}) =~ "hello-matey"
+    assert render_click(view, "generate-password", %{}) =~ "little-sunshine"
   end
 end
