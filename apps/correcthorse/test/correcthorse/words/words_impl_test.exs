@@ -3,7 +3,7 @@ defmodule Correcthorse.WordsImplTest do
   alias Correcthorse.Words.{WordList, WordsImpl}
 
   test "common words loaded" do
-    assert WordList.size(:common_words) == 4981
+    assert WordList.size(:common_words) == 4980
   end
 
   test "random word" do
