@@ -116,7 +116,7 @@ defmodule CorrecthorseWeb.PasswordLive do
   end
 
   defp capitalisations do
-    [{:none, "None"}, {:first, "First word"}, {:each_word, "Each word"}]
+    [{:none, "None"}, {:first, "First"}, {:each_word, "Each"}]
   end
 
   defp radio_selection(name, current_value, values) do
