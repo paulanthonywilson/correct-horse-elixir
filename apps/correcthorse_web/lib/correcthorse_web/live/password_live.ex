@@ -2,13 +2,17 @@ defmodule CorrecthorseWeb.PasswordLive do
   @moduledoc false
 
   use CorrecthorseWeb, :live_view
+
   alias Correcthorse.Password
+  alias Correcthorse.Debounce.Debouncer
 
   @default_min_words 4
   @min_min_words 2
   @max_min_words 50
 
   def mount(_params, _session, socket) do
+    {:ok, debouncer} = Debouncer.start_link(self(), 500)
+
     socket =
       assign(socket,
         min_words: @default_min_words,
@@ -16,7 +20,8 @@ defmodule CorrecthorseWeb.PasswordLive do
         separator: "-",
         capitalise: :none,
         append_digit: false,
-        password: ""
+        password: "",
+        _debouncer: debouncer
       )
 
     if connected?(socket) do
@@ -35,6 +40,8 @@ defmodule CorrecthorseWeb.PasswordLive do
         %{"min-words" => min_words, "min-chars" => min_chars, "_target" => target},
         socket
       ) do
+    %{_debouncer: debouncer} = socket.assigns
+    Debouncer.bounce(debouncer, :generate_new_password)
     min_words = String.to_integer(min_words)
 
     min_chars =
@@ -44,11 +51,16 @@ defmodule CorrecthorseWeb.PasswordLive do
       end
 
     socket = assign(socket, min_words: min_words, min_chars: min_chars)
-    {:noreply, assign_new_password(socket)}
+    {:noreply, socket}
   end
 
   def handle_event("password-decoration-details-changed", _, socket) do
     {:noreply, socket}
+  end
+
+
+  def handle_info(:generate_new_password, socket) do
+    {:noreply, assign_new_password(socket)}
   end
 
   defp generated_password(wordlist) do
@@ -76,7 +88,9 @@ defmodule CorrecthorseWeb.PasswordLive do
     [{:none, "None"}, {:first, "First char"}, {:each_word, "Each word"}]
   end
 
-  defp radio_selection(assigns \\ {}, name, current_value, values) do
+  defp radio_selection(name, current_value, values) do
+    assigns = %{}
+
     ~L"""
     <%= for {value, id} <- values do %>
     <input type="radio" id="<%=id %>" name="<%= name%>" value="<%= value %>"
@@ -87,7 +101,7 @@ defmodule CorrecthorseWeb.PasswordLive do
     """
   end
 
-  defp min_chars_from_min_words(min_words), do: min_words * 7
+  defp min_chars_from_min_words(min_words), do: min_words * 5
 
   defp max_min_words, do: @max_min_words
   defp min_min_words, do: @min_min_words
