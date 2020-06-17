@@ -21,6 +21,7 @@ defmodule CorrecthorseWeb.PasswordLive do
         capitalise: :none,
         append: [],
         password: "",
+        wordlist: [],
         _debouncer: debouncer
       )
 
@@ -44,11 +45,24 @@ defmodule CorrecthorseWeb.PasswordLive do
 
   def handle_event(
         "password-decoration-details-changed",
-        %{"separator" => separator, "capitalise" => capitalise, "append" => append},
+        %{
+          "separator" => separator,
+          "capitalise" => capitalise,
+          "append" => append
+        },
         socket
       ) do
     capitalise = String.to_existing_atom(capitalise)
-    {:noreply, assign(socket, separator: separator, capitalise: capitalise, append: append)}
+    %{wordlist: wordlist} = socket.assigns
+    password = generated_password(wordlist, separator, append, capitalise)
+
+    {:noreply,
+     assign(socket,
+       separator: separator,
+       capitalise: capitalise,
+       append: append,
+       password: password
+     )}
   end
 
   def handle_info(:generate_new_password, socket) do
@@ -71,8 +85,13 @@ defmodule CorrecthorseWeb.PasswordLive do
     {min_words, min_chars}
   end
 
-  defp generated_password(wordlist) do
-    Enum.join(wordlist, "-")
+  defp generated_password(wordlist, socket) do
+    %{separator: separator, append: append, capitalise: capitalise} = socket.assigns
+    generated_password(wordlist, separator, append, capitalise)
+  end
+
+  defp generated_password(wordlist, separator, append, capitalise) do
+    Password.to_password(wordlist, separator, append: append, capitalise: capitalise)
   end
 
   defp assign_new_password(socket) do
@@ -85,7 +104,11 @@ defmodule CorrecthorseWeb.PasswordLive do
   end
 
   defp assign_password(socket, wordlist) do
-    assign(socket, wordlist: wordlist, password: generated_password(wordlist), show_copied: false)
+    assign(socket,
+      wordlist: wordlist,
+      password: generated_password(wordlist, socket),
+      show_copied: false
+    )
   end
 
   defp separators do
@@ -93,7 +116,7 @@ defmodule CorrecthorseWeb.PasswordLive do
   end
 
   defp capitalisations do
-    [{:none, "None"}, {:first, "First char"}, {:each_word, "Each word"}]
+    [{:none, "None"}, {:first, "First word"}, {:each_word, "Each word"}]
   end
 
   defp radio_selection(name, current_value, values) do
