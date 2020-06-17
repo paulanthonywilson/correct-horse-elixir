@@ -15,7 +15,7 @@
       <section class="container">
         <nav role="navigation">
           <ul>
-            <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
+            <%= if liveview_nav?() do %>
               <li><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
             <% end %>
           </ul>
