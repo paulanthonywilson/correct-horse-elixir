@@ -7,7 +7,8 @@ set -e
 
 APP_NAME=correcthorse_main
 APP_VSN=`head VERSION | tr -d "\n"`
-SECRET_KEY_BASE_FILE=/opt/src/deploy/secret_key_base
+SECRET_KEY_DIR=/opt/src/deploy
+SECRET_KEY_BASE_FILE="$SECRET_KEY_DIR/secret_key_base"
 
 echo $APP_NAME
 echo $APP_VSN
@@ -30,19 +31,40 @@ mix local.hex --if-missing --force
 
 ## Secret key base
 
-mix deps.get
-if [ -f "$SECRET_KEY_BASE_FILE" ]; then
-    export SECRET_KEY_BASE=`head "$SECRET_KEY_BASE_FILE" | tr -d '\n'`
-else
-    export MIX_ENV=dev
-    mix compile
-    export SECRET_KEY_BASE=`mix phx.gen.secret | tr -d '\n' `
-    echo $SECRET_KEY_BASE > "$SECRET_KEY_BASE_FILE"
-fi
+# mix deps.get
+# if [ -f "$SECRET_KEY_BASE_FILE" ]; then
+#     export SECRET_KEY_BASE=`head "$SECRET_KEY_BASE_FILE" | tr -d '\n'`
+# else
+#     export MIX_ENV=dev
+#     mix compile
+#     export SECRET_KEY_BASE=`mix phx.gen.secret | tr -d '\n' `
+#     echo $SECRET_KEY_BASE > "$SECRET_KEY_BASE_FILE"
+# fi
+
+secret_key(){
+    file="$SECRET_KEY_DIR/$1"
+    if [ -f "$file" ]; then
+        key=`head "$file" | tr -d '\n'`
+    else
+        MIX_ENV=dev mix deps.get
+        MIX_ENV=dev mix compile
+        key=`mix phx.gen.secret | tr -d '\n' `
+        echo $key > $file
+    fi
+    echo $key
+}
+
+
+export SECRET_KEY_BASE=$(secret_key secret_key_base)
+export LIVE_VIEW_SALT=$(secret_key live_view_salt)
+export ADMIN_USER=$(secret_key admin_user)
+export ADMIN_PASSWORD=$(secret_key admin_password)
+
 
 export MIX_ENV=prod
 
 mix deps.get --only prod
+mix compile
 
 # do the asset stuff
 npm install --prefix ./apps/correcthorse_web/assets

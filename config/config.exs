@@ -18,7 +18,9 @@ config :correcthorse_web, CorrecthorseWeb.Endpoint,
   secret_key_base: "DeTB7k6raPEaQ/Jmntl4x9dVp8tPOE+g3FCCz1YEo+Nm1LAMHroWeWAAcf10AlUD",
   render_errors: [view: CorrecthorseWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Correcthorse.PubSub,
-  live_view: [signing_salt: "wVaMq5f5"]
+  live_view: [signing_salt: "wVaMq5f5"],
+  admin_user: "bob",
+  admin_password: "password"
 
 # Configures Elixir's Logger
 config :logger, :console,
