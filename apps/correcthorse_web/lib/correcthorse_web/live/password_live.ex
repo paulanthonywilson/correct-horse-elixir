@@ -106,8 +106,7 @@ defmodule CorrecthorseWeb.PasswordLive do
   defp assign_password(socket, wordlist) do
     assign(socket,
       wordlist: wordlist,
-      password: generated_password(wordlist, socket),
-      show_copied: false
+      password: generated_password(wordlist, socket)
     )
   end
 
