@@ -8,7 +8,6 @@ defmodule CorrecthorseWeb.PasswordLive do
 
   @default_min_words 4
   @min_min_words 2
-  @max_min_words 50
 
   def mount(_params, _session, socket) do
     {:ok, debouncer} = Debouncer.start_link(self(), 500)
@@ -16,7 +15,7 @@ defmodule CorrecthorseWeb.PasswordLive do
     socket =
       assign(socket,
         min_words: @default_min_words,
-        min_chars: min_chars_from_min_words(@default_min_words),
+        min_chars: Password.min_chars_from_min_words(@default_min_words),
         separator: "-",
         capitalise: :none,
         append: [],
@@ -78,7 +77,7 @@ defmodule CorrecthorseWeb.PasswordLive do
 
     min_chars =
       case target do
-        ["min-words"] -> min_chars_from_min_words(min_words)
+        ["min-words"] -> Password.min_chars_from_min_words(min_words)
         _ -> String.to_integer(min_chars)
       end
 
@@ -145,11 +144,9 @@ defmodule CorrecthorseWeb.PasswordLive do
     """
   end
 
-  defp min_chars_from_min_words(min_words), do: min_words * 5
-
-  defp max_min_words, do: @max_min_words
+  defp max_min_words, do: Password.max_minimum_words()
   defp min_min_words, do: @min_min_words
 
-  defp min_min_chars, do: min_chars_from_min_words(min_min_words())
-  defp max_min_chars, do: min_chars_from_min_words(max_min_words())
+  defp min_min_chars, do: Password.min_chars_from_min_words(min_min_words())
+  defp max_min_chars, do: Password.min_chars_from_min_words(max_min_words())
 end

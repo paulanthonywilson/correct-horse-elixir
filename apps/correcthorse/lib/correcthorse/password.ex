@@ -4,6 +4,8 @@ defmodule Correcthorse.Password do
   a password with `to_password/3`.
   """
 
+  @max_minimum_words 50
+
   @words (case Mix.env() do
             :test -> StubWords
             _ -> Correcthorse.Words.WordsImpl
@@ -12,10 +14,23 @@ defmodule Correcthorse.Password do
   @doc """
   List of (random) words that can be used to make a password with `to_password/3`
   """
-  @spec words(pos_integer(), pos_integer()) :: list(String.t)
+  @spec words(pos_integer(), pos_integer()) :: list(String.t())
   def words(minimum_words, minimum_chars) do
-    do_words([], 0, {minimum_words, minimum_chars})
+    do_words([], 0, restrict_minimum_sizes(minimum_words, minimum_chars))
   end
+
+  defp restrict_minimum_sizes(minimum_words, minimum_chars) do
+    {min(max_minimum_words(), minimum_words), min(max_minimum_chars(), minimum_chars)}
+  end
+
+  @spec max_minimum_words :: 50
+  def max_minimum_words, do: @max_minimum_words
+
+  @spec max_minimum_chars :: 250
+  def max_minimum_chars, do: min_chars_from_min_words(max_minimum_words())
+
+  @spec min_chars_from_min_words(pos_integer()) :: pos_integer()
+  def min_chars_from_min_words(min_words), do: min_words * 5
 
   @doc """
   Turn a list of words into a password.pos_integer()
@@ -24,9 +39,9 @@ defmodule Correcthorse.Password do
   * options. Keyword list of options, which may incliude:
     * `captalise: :each_word` - capitalise every word
     * `capitalise: first` - capitalise the first word
-    * `append: append` - add `String.to_string(append)` to the end of the password
+    * `append: append` - add `String.Chars.to_string(append)` to the end of the password
   """
-  @spec to_password(list(String.t), String.t, list({atom, any})) :: String.t
+  @spec to_password(list(String.t()), String.t(), list({atom, any})) :: String.t()
   def to_password(wordlist, separator, options) do
     wordlist
     |> decorate(options)
@@ -34,11 +49,13 @@ defmodule Correcthorse.Password do
   end
 
   defp decorate(wordlist, []), do: wordlist
+
   defp decorate(wordlist, [{:capitalise, :each_word} | rest]) do
     wordlist
     |> Enum.map(&String.capitalize/1)
     |> decorate(rest)
   end
+
   defp decorate(wordlist, [{:capitalise, :first} | rest]) do
     wordlist
     |> List.update_at(0, &String.capitalize/1)

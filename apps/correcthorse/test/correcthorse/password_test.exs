@@ -16,6 +16,18 @@ defmodule Correcthorse.PasswordTest do
     test "extra word is added when mimimum length is not met" do
       assert Password.words(2, 5) == ["extra", "me", "oh"]
     end
+
+    test "no more than the 50 minimum words" do
+      StubWords.set_wordlist(Enum.map(0..500, &String.Chars.to_string/1))
+      assert length(Password.words(500, 1)) == 50
+    end
+
+    test "no more than the 250 minimum characters" do
+      StubWords.set_wordlist(Enum.map(0..500, fn i -> "#{Integer.mod(i, 10)}" end))
+      wordlist = Password.words(2, 500)
+      character_length = Enum.reduce(wordlist, 0, fn w, acc -> acc + String.length(w) end)
+      assert 250 == character_length
+    end
   end
 
   describe "words_to_password" do
@@ -37,4 +49,5 @@ defmodule Correcthorse.PasswordTest do
                "Hello-There"
     end
   end
+
 end
