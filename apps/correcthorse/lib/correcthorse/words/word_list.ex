@@ -2,7 +2,7 @@ defmodule Correcthorse.Words.WordList do
   @moduledoc """
   Represents a word list, providing fast concurrent lookups by index.
 
-  ETS tables under the hood, naturally.
+  ETS table under the hood, naturally.
   """
 
   use GenServer
@@ -42,7 +42,7 @@ defmodule Correcthorse.Words.WordList do
 
   def handle_continue(:add_words, {table, words}) do
     words
-    |> Stream.map(fn w -> String.trim(w) end)
+    |> Stream.map(&String.trim/1)
     |> Stream.with_index()
     |> Enum.each(fn {w, i} -> :ets.insert(table, {i, w}) end)
 

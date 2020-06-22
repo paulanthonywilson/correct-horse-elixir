@@ -1,16 +1,32 @@
 defmodule Correcthorse.Password do
   @moduledoc """
-  Generates lists of random words to create a passphrase from.
+  Generates lists of random words with `words/2` that can be used to make
+  a password with `to_password/3`.
   """
 
   @words (case Mix.env() do
             :test -> StubWords
             _ -> Correcthorse.Words.WordsImpl
           end)
-  def words(minimum_words, minimum_length) do
-    do_words([], 0, {minimum_words, minimum_length})
+
+  @doc """
+  List of (random) words that can be used to make a password with `to_password/3`
+  """
+  @spec words(pos_integer(), pos_integer()) :: list(String.t)
+  def words(minimum_words, minimum_chars) do
+    do_words([], 0, {minimum_words, minimum_chars})
   end
 
+  @doc """
+  Turn a list of words into a password.pos_integer()
+  * wordlist - the list of words
+  * separator - string used to separate the words
+  * options. Keyword list of options, which may incliude:
+    * `captalise: :each_word` - capitalise every word
+    * `capitalise: first` - capitalise the first word
+    * `append: append` - add `String.to_string(append)` to the end of the password
+  """
+  @spec to_password(list(String.t), String.t, list({atom, any})) :: String.t
   def to_password(wordlist, separator, options) do
     wordlist
     |> decorate(options)
@@ -37,18 +53,18 @@ defmodule Correcthorse.Password do
 
   defp decorate(wordlist, [_ | rest]), do: decorate(wordlist, rest)
 
-  defp do_words(wordlist, size, {minimum_words, minimum_length})
-       when length(wordlist) >= minimum_words and size >= minimum_length do
+  defp do_words(wordlist, char_count, {minimum_words, minimum_chars})
+       when length(wordlist) >= minimum_words and char_count >= minimum_chars do
     wordlist
   end
 
-  defp do_words(wordlist, size, constraints) do
+  defp do_words(wordlist, char_count, constraints) do
     new_wordlist = [@words.random_word() | wordlist]
-    new_size = calculate_size(size, new_wordlist)
-    do_words(new_wordlist, new_size, constraints)
+    new_char_count = calculate_size(char_count, new_wordlist)
+    do_words(new_wordlist, new_char_count, constraints)
   end
 
-  defp calculate_size(previous_size, [new_word | _]) do
-    previous_size + String.length(new_word)
+  defp calculate_size(previous_char_count, [new_word | _]) do
+    previous_char_count + String.length(new_word)
   end
 end
