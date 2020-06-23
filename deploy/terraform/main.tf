@@ -107,7 +107,7 @@ resource "aws_security_group" "default" {
 }
 
 data "aws_acm_certificate" "mycert" {
-  domain = "beta.correcthorsebatterystaple.com"
+  domain = var.domain_name
   statuses = ["ISSUED"]
 }
 
@@ -146,10 +146,27 @@ resource "aws_instance" "web" {
   # use this to set up nginx so we can see it working.
   # Once we have releases it is no longer needed
   user_data  =  file("cloud_config.yaml")
+
+  lifecycle {
+    create_before_destroy = true
+  }
+  provisioner "file" {
+    source = "../release/${var.release_name}.tar.gz"
+    destination = "/home/ubuntu/${var.release_name}.tar.gz"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "mkdir app",
+      "cd app && tar zxvf ../${var.release_name}.tar.gz",
+      "sudo service ${var.release_name} start" 
+    ]
+  }
 }
 
 resource "aws_lb" "lb" {
   name = "new-front-of-house"
+  depends_on = [aws_instance.web]
   internal           = false
   load_balancer_type = "application"
   
@@ -194,4 +211,7 @@ resource "aws_lb_target_group_attachment" "instance" {
   target_group_arn = aws_lb_target_group.instance.arn
   target_id        = aws_instance.web.id
   port             = 4001
+  lifecycle {
+    create_before_destroy = true
+  }
 }

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash 
+
+set -e
+
+SCRIPT_PATH=`dirname $0`
+SCRIPT_PATH=`realpath $SCRIPT_PATH`
+BASE_PATH=`realpath "$SCRIPT_PATH/.."`
+
+bash "$SCRIPT_PATH/make-release"
+
+cd "$BASE_PATH/deploy/terraform"
+
+terraform taint aws_instance.web
+
+bash "$SCRIPT_PATH/infra-build"

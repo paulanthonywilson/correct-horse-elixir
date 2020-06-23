@@ -17,6 +17,14 @@ variable "aws_region" {
   default     = "eu-west-1"
 }
 
+variable "domain_name" {
+  description = "the domain name, to look up the aws cert or whatevs"
+}
+
+variable "release_name" {
+  description = "app to be released"
+}
+
 # Ubuntu  focal 20.04 LTS
 variable "aws_amis" {
   default = {

@@ -7,7 +7,6 @@ set -e
 
 APP_NAME=correcthorse_main
 APP_VSN=`head VERSION | tr -d "\n"`
-SECRET_KEY_DIR=/opt/src/deploy/keys
 
 echo $APP_NAME
 echo $APP_VSN
@@ -21,38 +20,27 @@ cp -r .git /opt/build
 cd /opt/build
 git checkout -f 
 
+## Secret keys 
+release_vars=`cat "/opt/src/deploy/release_vars"`
 
+for var in $release_vars
+do
+    file="/opt/src/deploy/secrets/$var"
+    if [ -f "$file" ]; then
+        export $var=`head "$file" | tr -d '\n'`
+    else
+        echo "***PROBLEM****"
+        echo "$file not found. bin/initialise-secrets needs to be run."
+        echo 
+        exit 1
+    fi
+done
+
+
+export MIX_ENV=prod
 # Install updated versions of hex/rebar
 mix local.rebar --force
 mix local.hex --if-missing --force
-
-
-
-## Secret keys 
-
-mkdir -p $SECRET_KEY_DIR
-echo '*' > $SECRET_KEY_DIR/.gitignore
-
-secret_key(){
-    file="$SECRET_KEY_DIR/$1"
-    if [ -f "$file" ]; then
-        key=`head "$file" | tr -d '\n'`
-    else
-        MIX_ENV=dev mix deps.get
-        MIX_ENV=dev mix compile
-        key=`mix phx.gen.secret | tr -d '\n' `
-        echo $key > $file
-    fi
-    echo $key
-}
-
-
-export SECRET_KEY_BASE=$(secret_key secret_key_base)
-export LIVE_VIEW_SALT=$(secret_key live_view_salt)
-export ADMIN_USER=$(secret_key admin_user)
-export ADMIN_PASSWORD=$(secret_key admin_password)
-
-export MIX_ENV=prod
 
 mix deps.get --only prod
 mix compile

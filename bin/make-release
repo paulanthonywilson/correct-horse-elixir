@@ -8,6 +8,8 @@ BASE_PATH=`realpath "$SCRIPT_PATH/.."`
 DOCKER_PATH="$BASE_PATH/deploy/docker_build"
 APP=correcthorse_main
 
+bash $BASE_PATH/bin/initialise-secrets
+
 docker build -t $APP $DOCKER_PATH
 
 docker run -v "$BASE_PATH":/opt/src --rm -it $APP /opt/src/deploy/docker_build/build
