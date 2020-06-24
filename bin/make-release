@@ -10,10 +10,9 @@ APP=correcthorse_main
 
 bash $BASE_PATH/bin/initialise-secrets
 
-docker build -t $APP $DOCKER_PATH
+docker build -t $APP -f $DOCKER_PATH/Dockerfile . 
 
-docker run -v "$BASE_PATH":/opt/src --rm -it $APP /opt/src/deploy/docker_build/build
-# docker run -v "$BASE_PATH":/opt/src --rm -it $APP /bin/bash
+mkdir -p $BASE_PATH/deploy/release
+echo '*' > $BASE_PATH/deploy/release/.gitignore
 
-
-
+docker run -v "$BASE_PATH/deploy/release":/opt/release --rm -it $APP ./deploy/docker_build/copy_release

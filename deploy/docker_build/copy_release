@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -e
+
+cp _build/prod/rel/*.tar.gz /opt/release/
+
+exit 0

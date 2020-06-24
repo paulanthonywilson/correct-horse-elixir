@@ -1,0 +1,10 @@
+.git
+_build
+*.dump
+bin
+deploy/terraform
+deploy/release
+deps
+.elixir_ls
+**/priv/static
+**/node_modules

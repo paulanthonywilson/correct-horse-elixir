@@ -28,13 +28,18 @@ defmodule Correcthorse.Umbrella.MixProject do
     [
       correcthorse_main: [
         version: version(),
-        applications: [correcthorse: :permanent, correcthorse_web: :permanent]
+        applications: [correcthorse: :permanent, correcthorse_web: :permanent],
+        include_executables_for: [:unix]
       ]
     ]
   end
 
   defp version do
-    "#{__DIR__}/VERSION"
+    file_first_line("#{__DIR__}/VERSION")
+  end
+
+  defp file_first_line(file_path) do
+    file_path
     |> File.read!()
     |> String.split()
     |> hd()
