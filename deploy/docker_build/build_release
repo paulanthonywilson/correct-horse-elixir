@@ -10,8 +10,17 @@ mix local.rebar --force
 mix local.hex --if-missing --force
 mix deps.get --only prod
 
-npm install --prefix apps/correcthorse_web/assets
-npm run deploy --prefix apps/correcthorse_web/assets
+if [ -d "apps" ]; then
+    asset_dirs=`find apps -regex '.*/assets/package.json$' | xargs -I % dirname %`
+else
+    asset_dirs=`find lib -regex '.*/assets/package.json$' | xargs -I % dirname %`
+fi
+
+for ad in $asset_dirs
+do
+    npm install --prefix $ad
+    npm run deploy --prefix $ad
+done
 
 mix phx.digest
 
