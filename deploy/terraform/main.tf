@@ -117,6 +117,9 @@ resource "aws_key_pair" "auth" {
 }
 
 resource "aws_instance" "web" {
+
+  count  = var.instance_count
+
   # The connection block tells our provisioner how to
   # communicate with the resource (instance)
   connection {
@@ -163,6 +166,15 @@ resource "aws_instance" "web" {
     ]
   }
 }
+resource "aws_lb_target_group_attachment" "instance" {
+  count = length(aws_instance.web)
+  target_group_arn = aws_lb_target_group.instance.arn
+  target_id        = aws_instance.web[count.index].id
+  port             = 4001
+  lifecycle {
+    create_before_destroy = true
+  }
+}
 
 resource "aws_lb" "lb" {
   name = "new-front-of-house"
@@ -207,11 +219,3 @@ resource "aws_lb_target_group" "instance" {
   vpc_id = aws_vpc.default.id
 }
 
-resource "aws_lb_target_group_attachment" "instance" {
-  target_group_arn = aws_lb_target_group.instance.arn
-  target_id        = aws_instance.web.id
-  port             = 4001
-  lifecycle {
-    create_before_destroy = true
-  }
-}

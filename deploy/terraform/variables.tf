@@ -25,6 +25,11 @@ variable "release_name" {
   description = "app to be released"
 }
 
+variable "instance_count" {
+  description = "number of instances to deploy"
+  default = 1
+}
+
 # Ubuntu  focal 20.04 LTS
 variable "aws_amis" {
   default = {

@@ -6,10 +6,15 @@ SCRIPT_PATH=`dirname $0`
 SCRIPT_PATH=`realpath $SCRIPT_PATH`
 BASE_PATH=`realpath "$SCRIPT_PATH/.."`
 
-bash "$SCRIPT_PATH/make-release"
+# bash "$SCRIPT_PATH/make-release"
 
 cd "$BASE_PATH/deploy/terraform"
 
-terraform taint aws_instance.web
+n=0
+while terraform taint aws_instance.web[$n]
+do 
+echo $n
+n=$(($n + 1))
+done
 
 bash "$SCRIPT_PATH/infra-build"
