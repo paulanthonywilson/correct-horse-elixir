@@ -10,7 +10,6 @@ defmodule CorrecthorseWeb.PasswordLive do
   @min_min_words 2
 
   def mount(_params, _session, socket) do
-    IO.inspect {socket}
     {:ok, debouncer} = Debouncer.start_link(self(), 500)
 
     socket =
