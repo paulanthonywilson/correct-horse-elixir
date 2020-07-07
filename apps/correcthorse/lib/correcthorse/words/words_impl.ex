@@ -7,8 +7,7 @@ defmodule Correcthorse.Words.WordsImpl do
 
   alias Correcthorse.Words.WordList
 
-
-  @spec random_word :: String.t
+  @spec random_word :: String.t()
   def random_word() do
     WordList.random_word(:common_words)
   end

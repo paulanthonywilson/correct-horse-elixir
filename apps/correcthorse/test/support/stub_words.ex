@@ -9,19 +9,19 @@ defmodule StubWords do
 
   def agent_name, do: @agent_name
 
-  @spec start([String.t]) :: {:error, any} | {:ok, pid}
+  @spec start([String.t()]) :: {:error, any} | {:ok, pid}
   def start(wordlist \\ []) do
     res = Agent.start_link(fn -> [] end, name: StubWords.agent_name())
     StubWords.set_wordlist(wordlist)
     res
   end
 
-  @spec random_word :: String.t
+  @spec random_word :: String.t()
   def random_word do
     Agent.get_and_update(agent_name(), fn [h | t] -> {h, t} end)
   end
 
-  @spec set_wordlist(list(String.t)) :: :ok
+  @spec set_wordlist(list(String.t())) :: :ok
   def set_wordlist(words) do
     Agent.update(agent_name(), fn _ -> words end)
   end

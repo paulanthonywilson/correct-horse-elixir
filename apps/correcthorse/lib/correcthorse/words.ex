@@ -3,5 +3,5 @@ defmodule Correcthorse.Words do
   Behaviour for returning a word at random
   """
 
-  @callback random_word :: String.t
+  @callback random_word :: String.t()
 end

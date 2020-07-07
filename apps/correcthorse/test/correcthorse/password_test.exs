@@ -49,5 +49,4 @@ defmodule Correcthorse.PasswordTest do
                "Hello-There"
     end
   end
-
 end

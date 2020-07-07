@@ -11,7 +11,6 @@ defmodule Correcthorse.Words.WordListText do
     :ok
   end
 
-
   test "size" do
     assert WordList.size(reference()) == 3
   end

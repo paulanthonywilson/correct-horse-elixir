@@ -7,7 +7,7 @@ defmodule Correcthorse.WordsImplTest do
   end
 
   test "random word" do
-    Enum.each((1..1_000), fn _ ->
+    Enum.each(1..1_000, fn _ ->
       assert WordsImpl.random_word() =~ ~r/^[a-z]+$/
     end)
   end
