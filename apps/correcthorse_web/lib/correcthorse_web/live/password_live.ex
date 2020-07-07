@@ -117,9 +117,7 @@ defmodule CorrecthorseWeb.PasswordLive do
     [{:none, "None"}, {:first, "First"}, {:each_word, "Each"}]
   end
 
-  defp radio_selection(name, current_value, values) do
-    assigns = %{}
-
+  defp radio_selection(assigns, {name, current_value, values}) do
     ~L"""
     <%= for {value, id} <- values do %>
     <input type="radio" id="<%=id %>" name="<%= name%>" value="<%= value %>"
@@ -130,9 +128,7 @@ defmodule CorrecthorseWeb.PasswordLive do
     """
   end
 
-  defp append_checkbox(append, checked) do
-    assigns = %{}
-
+  defp append_checkbox(assigns, {append, checked}) do
     ~L"""
     <input type="checkbox"
     id="append<%= append %>"
