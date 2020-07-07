@@ -23,3 +23,12 @@ resource "dnsimple_record" "beta_chs" {
   priority = "0"
   value = aws_lb.lb.dns_name
 }
+
+resource "dnsimple_record" "main_chs" {
+  domain = "correcthorsebatterystaple.com"
+  name = ""
+  type = "ALIAS"
+  ttl = "60"
+  priority = "0"
+  value = aws_lb.lb.dns_name
+}
