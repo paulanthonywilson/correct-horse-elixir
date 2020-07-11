@@ -116,6 +116,7 @@ resource "aws_key_pair" "auth" {
   public_key = file(var.public_key_path)
 }
 
+
 resource "aws_instance" "web" {
   # The connection block tells our provisioner how to
   # communicate with the resource (instance)
@@ -145,7 +146,7 @@ resource "aws_instance" "web" {
 
   # use this to set up nginx so we can see it working.
   # Once we have releases it is no longer needed
-  user_data  =  file("cloud_config.yaml")
+  user_data  =  templatefile("cloud_config.yaml.tpl", {release_name: var.release_name} )
 
   lifecycle {
     create_before_destroy = true
