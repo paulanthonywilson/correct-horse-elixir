@@ -44,24 +44,22 @@ defmodule CorrecthorseWeb.PasswordLive do
 
   def handle_event(
         "password-decoration-details-changed",
-        %{
-          "separator" => separator,
-          "capitalise" => capitalise,
-          "append" => append
-        },
+        %{"separator" => separator, "capitalise" => capitalise, "append" => append},
         socket
       ) do
     capitalise = String.to_existing_atom(capitalise)
     %{wordlist: wordlist} = socket.assigns
     password = generated_password(wordlist, separator, append, capitalise)
 
-    {:noreply,
-     assign(socket,
-       separator: separator,
-       capitalise: capitalise,
-       append: append,
-       password: password
-     )}
+    socket =
+      assign(socket,
+        separator: separator,
+        capitalise: capitalise,
+        append: append,
+        password: password
+      )
+
+    {:noreply, socket}
   end
 
   def handle_info(:generate_new_password, socket) do
@@ -117,7 +115,12 @@ defmodule CorrecthorseWeb.PasswordLive do
     [{:none, "None"}, {:first, "First"}, {:each_word, "Each"}]
   end
 
-  defp radio_selection(assigns, {name, current_value, values}) do
+  defp radio_selection(%{socket: %{changed: changed}}, {name, current_value, values}) do
+
+    # Workaround for issue that needs investigation: if assigns is passed straight through
+    # then the comprehension below does not evaluate.
+    assigns = %{socket: %{changed: changed}}
+
     ~L"""
     <%= for {value, id} <- values do %>
     <input type="radio" id="<%=id %>" name="<%= name%>" value="<%= value %>"
