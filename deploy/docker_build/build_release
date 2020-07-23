@@ -8,7 +8,7 @@ set -e
 
 mix local.rebar --force
 mix local.hex --if-missing --force
-mix deps.get --only prod
+HEX_HTTP_CONCURRENCY=1 HEX_HTTP_TIMEOUT=120 mix deps.get mix deps.get --only prod
 
 if [ -d "apps" ]; then
     asset_dirs=`find apps -regex '.*/assets/package.json$' | xargs -I % dirname %`
