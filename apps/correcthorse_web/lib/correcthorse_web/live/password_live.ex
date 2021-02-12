@@ -6,6 +6,8 @@ defmodule CorrecthorseWeb.PasswordLive do
   alias Correcthorse.Password
   alias Correcthorse.Debounce.Debouncer
 
+  alias CorrecthorseWeb.{RadioSelectionComponent, AppendCheckboxComponent}
+
   @default_min_words 4
   @min_min_words 2
 
@@ -113,34 +115,6 @@ defmodule CorrecthorseWeb.PasswordLive do
 
   defp capitalisations do
     [{:none, "None"}, {:first, "First"}, {:each_word, "Each"}]
-  end
-
-  defp radio_selection(%{socket: %{changed: changed}}, {name, current_value, values}) do
-
-    # Workaround for issue that needs investigation: if assigns is passed straight through
-    # then the comprehension below does not evaluate.
-    assigns = %{socket: %{changed: changed}}
-
-    ~L"""
-    <%= for {value, id} <- values do %>
-    <input type="radio" id="<%=id %>" name="<%= name%>" value="<%= value %>"
-        <%= if current_value == value, do: "checked" %>
-    />
-    <label for="%<=name %>"><%= id %></label>
-    <% end %>
-    """
-  end
-
-  defp append_checkbox(assigns, {append, checked}) do
-    ~L"""
-    <input type="checkbox"
-    id="append<%= append %>"
-    value = "<%= append %>"
-    name= "append[]"
-    <%= if checked, do: "checked" %>
-    />
-    <label for="append<%= append %>"><%= append %></label>
-    """
   end
 
   defp max_min_words, do: Password.max_minimum_words()
