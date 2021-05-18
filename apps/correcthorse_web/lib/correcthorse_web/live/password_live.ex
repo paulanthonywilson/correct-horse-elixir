@@ -12,8 +12,6 @@ defmodule CorrecthorseWeb.PasswordLive do
   @min_min_words 2
 
   def mount(_params, _session, socket) do
-    {:ok, debouncer} = Debouncer.start_link(self(), 500)
-
     socket =
       assign(socket,
         min_words: @default_min_words,
@@ -22,12 +20,18 @@ defmodule CorrecthorseWeb.PasswordLive do
         capitalise: :none,
         append: [],
         password: "",
-        wordlist: [],
-        _debouncer: debouncer
+        wordlist: []
       )
 
     if connected?(socket) do
-      {:ok, assign_new_password(socket)}
+      {:ok, debouncer} = Debouncer.start_link(self(), 500)
+
+      socket =
+        socket
+        |> assign_new_password()
+        |> assign(:_debouncer, debouncer)
+
+      {:ok, socket}
     else
       {:ok, assign_password(socket, [])}
     end

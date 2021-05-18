@@ -12,7 +12,7 @@ write_files:
  
     [Service]
     Type=simple
-    PIDFile=/var/run/correcthorse_main/${release_name}.pid
+    PIDFile=/var/run/${release_name}.pid
     ExecStart=/home/ubuntu/app/bin/${release_name} start 2>&1
     TimeoutStartSec=0
     Restart=on-failure

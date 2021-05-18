@@ -160,7 +160,7 @@ resource "aws_instance" "web" {
     inline = [
       "mkdir app",
       "cd app && tar zxvf ../${var.release_name}.tar.gz",
-      "sudo service ${var.release_name} start" 
+      "sudo systemctl enable --now ${var.release_name}"
     ]
   }
 }
