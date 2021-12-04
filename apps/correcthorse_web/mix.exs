@@ -9,9 +9,9 @@ defmodule CorrecthorseWeb.MixProject do
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.7",
+      elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      compilers: [:gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -24,7 +24,7 @@ defmodule CorrecthorseWeb.MixProject do
   def application do
     [
       mod: {CorrecthorseWeb.Application, []},
-      extra_applications: [:logger, :runtime_tools, :wx, :observer]
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 
@@ -37,18 +37,19 @@ defmodule CorrecthorseWeb.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.5.3"},
-      {:phoenix_live_view, "~> 0.15"},
-      {:floki, ">= 0.0.0", only: :test},
-      {:phoenix_html, "~> 2.11"},
+      {:phoenix, "~> 1.6.2"},
+      {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_dashboard, "~> 0.4"},
+      {:phoenix_live_view, "~> 0.16.0"},
+      {:floki, ">= 0.30.0", only: :test},
+      {:phoenix_live_dashboard, "~> 0.5"},
+      {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
       {:telemetry_metrics, "~> 0.6"},
-      {:telemetry_poller, "~> 0.4"},
-      {:gettext, "~> 0.11"},
+      {:telemetry_poller, "~> 1.0"},
+      {:gettext, "~> 0.18"},
       {:correcthorse, in_umbrella: true},
-      {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:jason, "~> 1.2"},
+      {:plug_cowboy, "~> 2.5"}
     ]
   end
 
@@ -57,7 +58,8 @@ defmodule CorrecthorseWeb.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "cmd npm install --prefix assets"]
+      setup: ["deps.get"],
+      "assets.deploy": ["esbuild default --minify", "phx.digest"]
     ]
   end
 end

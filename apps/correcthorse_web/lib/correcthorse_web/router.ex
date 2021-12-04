@@ -1,7 +1,6 @@
 defmodule CorrecthorseWeb.Router do
   use CorrecthorseWeb, :router
 
-  import Phoenix.LiveDashboard.Router
   import Plug.BasicAuth
 
   pipeline :browser do
@@ -20,22 +19,16 @@ defmodule CorrecthorseWeb.Router do
   scope "/", CorrecthorseWeb do
     pipe_through :browser
 
-    live "/reverse", ReverseLive
     live "/", PasswordLive
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", CorrecthorseWeb do
-  #   pipe_through :api
-  # end
-
-  # LiveDashboard with basic auth
 
   pipeline :admins_only do
     plug :basic_auth,
       username: Application.get_env(:correcthorse_web, CorrecthorseWeb.Endpoint)[:admin_user],
       password: Application.get_env(:correcthorse_web, CorrecthorseWeb.Endpoint)[:admin_password]
   end
+
+  import Phoenix.LiveDashboard.Router
 
   scope "/" do
     pipe_through [:browser, :admins_only]

@@ -18,5 +18,8 @@ erl_crash.dump
 
 # Also ignore archive artifacts (built via "mix archive.build").
 *.ez
-rel/artifacts/
-.DS_Store
+
+# Temporary files, for example, from tests.
+/tmp
+
+

@@ -1,13 +1,4 @@
-# This file is responsible for configuring your umbrella
-# and **all applications** and their dependencies with the
-# help of Mix.Config.
-#
-# Note that all applications in your umbrella share the
-# same configuration and dependencies, which is why they
-# all use the same configuration file. If you want different
-# configurations or dependencies per app, it is best to
-# move said applications out of the umbrella.
-use Mix.Config
+import Config
 
 config :correcthorse_web,
   generators: [context_app: :correcthorse]
@@ -15,12 +6,21 @@ config :correcthorse_web,
 # Configures the endpoint
 config :correcthorse_web, CorrecthorseWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "DeTB7k6raPEaQ/Jmntl4x9dVp8tPOE+g3FCCz1YEo+Nm1LAMHroWeWAAcf10AlUD",
   render_errors: [view: CorrecthorseWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Correcthorse.PubSub,
-  live_view: [signing_salt: "wVaMq5f5"],
   admin_user: "bob",
-  admin_password: "password"
+  admin_password: "password",
+  live_view: [signing_salt: "1iAK2ksh"]
+
+# Configure esbuild (the version is required)
+config :esbuild,
+  version: "0.12.18",
+  default: [
+    args:
+      ~w(js/app.js --bundle --target=es2016 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
+    cd: Path.expand("../apps/correcthorse_web/assets", __DIR__),
+    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+  ]
 
 # Configures Elixir's Logger
 config :logger, :console,
@@ -32,4 +32,4 @@ config :phoenix, :json_library, Jason
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
-import_config "#{Mix.env()}.exs"
+import_config "#{config_env()}.exs"

@@ -23,9 +23,10 @@ input.generated-password {
     width: 10%;
     display: block;
     float: left;
-    img {
-        height: 100%;
-    }
+}
+
+.copy-generated-password img {
+    height: 100%;
 }
 
 
@@ -45,14 +46,12 @@ h1 {
     display: none;
 }
 
-.decoration-details {
-    input, label {
-        float: left;
-        height: 2em;
-    }
 
-    label {
-        padding-right: 2rem;
-        padding-left: 0.5rem;
-    }
+.decoration-details input, .decoration-details label {
+    float: left;
+    height: 2em;
+}
+.decoration-details label {
+    padding-right: 2rem;
+    padding-left: 0.5rem;
 }

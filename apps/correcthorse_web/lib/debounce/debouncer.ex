@@ -38,17 +38,13 @@ defmodule Correcthorse.Debounce.Debouncer do
     send(pid, message)
   end
 
-  @doc """
-  Not received another message since timeout, so sent to receiver and reset
-  """
+  # Not received another message since timeout, so sent to receiver and reset
   def handle_info(:timeout, s = %{receiver: receiver, last_message: last_message}) do
     send(receiver, last_message)
     {:noreply, %{s | last_message: nil}}
   end
 
-  @doc """
-  Receives message
-  """
+  # Receives message
   def handle_info(message, s = %{timeout: timeout}) do
     {:noreply, %{s | last_message: message}, timeout}
   end
