@@ -24,7 +24,7 @@ if config_env() == :prod do
       end
     )
 
-  app_name = System.get_env("FLY_APP_NAME") || raise "FLY_APP_NAME not available"
+  _app_name = System.get_env("FLY_APP_NAME") || raise "FLY_APP_NAME not available"
 
   # ## Using releases
   #
