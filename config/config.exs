@@ -10,7 +10,7 @@ config :correcthorse_web, CorrecthorseWeb.Endpoint,
   pubsub_server: Correcthorse.PubSub,
   admin_user: "bob",
   admin_password: "password",
-  live_view: [signing_salt: "1iAK2ksh"]
+  live_view: [signing_salt: "qUr8SB7PwsB0Pupuw+2qF1oUqP98PXhe"]
 
 # Configure esbuild (the version is required)
 config :esbuild,
