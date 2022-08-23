@@ -1,7 +1,7 @@
 defmodule CorrecthorseWeb.Router do
   use CorrecthorseWeb, :router
 
-  import Plug.BasicAuth
+  alias Plug.BasicAuth
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -23,9 +23,7 @@ defmodule CorrecthorseWeb.Router do
   end
 
   pipeline :admins_only do
-    plug :basic_auth,
-      username: Application.get_env(:correcthorse_web, CorrecthorseWeb.Endpoint)[:admin_user],
-      password: Application.get_env(:correcthorse_web, CorrecthorseWeb.Endpoint)[:admin_password]
+    plug :b_auth
   end
 
   import Phoenix.LiveDashboard.Router
@@ -33,5 +31,14 @@ defmodule CorrecthorseWeb.Router do
   scope "/" do
     pipe_through [:browser, :admins_only]
     live_dashboard "/dashboard", metrics: CorrecthorseWeb.Telemetry
+  end
+
+  defp b_auth(conn, _opts) do
+    config = Application.fetch_env!(:correcthorse_web, CorrecthorseWeb.Endpoint)
+
+    BasicAuth.basic_auth(conn,
+      username: Keyword.fetch!(config, :admin_user),
+      password: Keyword.fetch!(config, :admin_password)
+    )
   end
 end
